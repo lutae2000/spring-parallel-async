@@ -84,7 +84,45 @@ public String helloworld_3_async_calls_handle(){
     timeTaken();
     return hw;
 }
+```
 
+
+#### anyOf를 사용할 경우 더 빠른 응답의 내용을 골라서 응답할수 있음
+```
+public String anyOf(){
+    //DB
+    CompletableFuture<String> db = CompletableFuture.supplyAsync(()->{
+        delay(1000);
+        log("response DB");
+        return "hello world";
+    });
+
+    //REST CALL
+    CompletableFuture<String> restcall = CompletableFuture.supplyAsync(()->{
+        delay(2000);
+        log("response from REST");
+        return "hello world";
+    });
+
+    //SOAP call
+    CompletableFuture<String> restCall = CompletableFuture.supplyAsync(() -> {
+        delay(3000);
+        log("response from SOAP");
+        return "hello world";
+    });
+
+    List<CompletableFuture<String>> cfList = Arrays.asList(db, restcall, restCall);
+    CompletableFuture<Object> cfAny = CompletableFuture.anyOf(cfList.toArray(new CompletableFuture[cfList.size()]));
+
+    String result = (String) cfAny.thenApply(v -> {
+        if(v instanceof String){
+            return v;
+        }
+        return null;
+    })
+        .join();
+    return result;
+}
 ```
 
 ### Excutors 쓰레드 할당 메소드 설명

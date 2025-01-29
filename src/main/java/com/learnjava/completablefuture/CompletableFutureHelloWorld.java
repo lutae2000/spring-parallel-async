@@ -128,6 +128,36 @@ public class CompletableFutureHelloWorld {
         return hw;
     }
 
+    public String helloworld_3_async_calls_custom_threadpool_async(){
+        startTimer();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        CompletableFuture<String> hello = CompletableFuture.supplyAsync(()->hws.hello(), executorService);
+        CompletableFuture<String> world = CompletableFuture.supplyAsync(()->hws.world(), executorService);
+        CompletableFuture<String> hiCompletableFuture =  CompletableFuture.supplyAsync(()->{
+            delay(1000);
+            return " Hi CompletableFuture!";
+        });
+
+        String hw= hello
+            .thenCombineAsync(world, (h, w) -> {
+                log("thenCombine h/w");
+                return h+w;
+            }, executorService) // first, second
+            .thenCombineAsync(hiCompletableFuture, (previous,current)->{
+                log("thenCombine previous, current");
+                return previous+current;
+            }, executorService)
+            .thenApplyAsync(s->{
+                log("thenApply");
+                return s.toUpperCase();
+            }, executorService)
+            .join();
+
+        timeTaken();
+        return hw;
+    }
+
     public CompletableFuture<String> helloWorld_thenCompose(){
 
         return CompletableFuture.supplyAsync(hws::hello)
