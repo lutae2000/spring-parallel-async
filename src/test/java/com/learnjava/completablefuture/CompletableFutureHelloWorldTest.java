@@ -1,13 +1,12 @@
 package com.learnjava.completablefuture;
 
-import com.learnjava.service.HelloWorldService;
-import org.junit.jupiter.api.Test;
-
-import java.util.concurrent.CompletableFuture;
-
 import static com.learnjava.util.CommonUtil.startTimer;
 import static com.learnjava.util.CommonUtil.timeTaken;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import com.learnjava.service.HelloWorldService;
+import java.util.concurrent.CompletableFuture;
+import org.junit.jupiter.api.Test;
 
 class CompletableFutureHelloWorldTest {
 
@@ -66,5 +65,17 @@ class CompletableFutureHelloWorldTest {
                 .join();
 
         timeTaken();
+    }
+
+    @Test
+    void helloworld_3_async_calls_log() {
+
+        //given
+
+        //when
+        String helloWorld = cfhw.helloworld_3_async_calls_log();
+
+        //then
+        assertEquals("HELLO WORLD! HI COMPLETABLEFUTURE!", helloWorld);
     }
 }
